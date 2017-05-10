@@ -18,9 +18,9 @@ class Amity(object):
         self.living_spaces = []
         self.rooms = []
         self.living_spaces_shuffle = []
-        self.allocate_office = {}
-        self.allocate_living_space = {}
-        self.reallocate_person = {}
+        self.office_allocations = {}
+        self.living_space_allocations = {}
+        self.reallocated_person = {}
 
     def create_room(self, room_type, room_names):
         """function to create a room."""
@@ -52,33 +52,23 @@ class Amity(object):
     def add_person(self, first_name, last_name, designation,
                    wants_accommodation):
         """add person to system and allocates a random room"""
-        print("one")
         name = first_name + last_name
-        print("two")
         try:
             if designation != "Staff" and designation != "Fellow":
                 raise ValueError
-            print("three")
             try:
-                print("four")
                 if wants_accommodation != "Y" and wants_accommodation != "N":
                     raise ValueError
-                print("five")
                 if designation == "Staff" and wants_accommodation == "Y":
                     print("Staff cannot be allocated Living Space")
                     return "Staff cannot be allocated Living Space"
                 else:
-                    print("six")
                     if stringcase.pascalcase(designation) == "Staff":
-                        print("seven")
                         person = Staff(first_name, last_name)
-                        print("eight")
                         self.staff.append(person)
                         self.staff_shuffle.append(person)
                         self.people.append(name)
-                        print(self.people)
-                        print("nine")
-                        print(self.allocate_office())
+                        self.allocate_office(name)
                         print("Person has been added successfully.")
 
                     elif stringcase.pascalcase(designation) == "Fellow":
@@ -87,8 +77,8 @@ class Amity(object):
                         self.fellows_shuffle.append(person)
                         self.people.append(name)
                         print(self.people)
-                        print(self.allocate_office())
-                        print(self.allocate_living_space())
+                        print(self.allocate_office(name))
+                        print(self.allocate_living_space(name))
                         print("Person has been added successfully.")
                 print(self.people)
                 # return "Person has been added successfully."
@@ -99,23 +89,34 @@ class Amity(object):
             print("Incorrect entry. Please enter either Staff or Fellow")
             return "Incorrect entry. Please enter either Staff or Fellow"
 
-    def allocate_office():
+    def allocate_office(self, name):
         """function to allocate person to room"""
-        for office in random.shuffle(self.office_shuffle):
-            if len(office.office_members) <= office.max_people:
-                office.office_members.append(name)
-                print("{} has been allocated to {}".format(name,
-                                                           office.room_names))
-                return "{} has been allocated to {}".format(name,
-                                                            office.room_names)
+        # add exceptions
+        available_offices = [office for office in self.offices if
+                             len(office.office_members) < office.max_capacity]
+        if available_offices:
+            available_office = random.choice(available_offices)
+            available_office.office_members.append(name)
+            print(available_office.office_members)
 
-    def allocate_living_space():
+        else:
+            print("There are no rooms available")
+        #
+        # for office in random.shuffle(self.office_shuffle):
+        #     if len(office.office_members) <= office.max_people:
+        #         office.office_members.append(name)
+        #         print("{} has been allocated to {}".format(name,
+        #                                                    office.room_names))
+        #         return "{} has been allocated to {}".format(name,
+        #                                                     office.room_names)
+
+    def allocate_living_space(self, name):
         if self.wants_accommodation == "Y":
             for living_space in random.shuffle(self.living_spaces_shuffle):
                 if len(living_space.living_space_members) <= 4:
-                    living_space.living_space_members.append(self.name)
-                    print("{} has been allocated to {}".format(self.name, living_space.room_name))
-                    return "{} has been allocated to {}".format(self.name, living_space.room_name)
+                    living_space.living_space_members.append(name)
+                    print("{} has been allocated to {}".format(name, living_space.room_name))
+                    return "{} has been allocated to {}".format(name, living_space.room_name)
 
     # def reallocate_person(self, id, room_name):
     #     """function to re-allocate person to a new room"""
@@ -156,7 +157,7 @@ class Amity(object):
                 else:
                     first_name = word[0]
                     last_name = word[1]
-                add_person(first_name, last_name, designation, wants_accommodation)
+                self.add_person(first_name, last_name, designation, wants_accommodation)
 
     def load_state():
         """loads data from database into application"""

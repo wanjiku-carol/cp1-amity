@@ -7,13 +7,15 @@ class Room(object):
 
 class LivingSpace(Room):
     living_space_members = []
+    max_capacity = 4
 
-    def __init__(self, room_names, max_people=4):
+    def __init__(self, room_names):
         Room.__init__(self, room_names, "living space")
 
 
 class Office(Room):
     office_members = []
+    max_capacity = 6
 
-    def __init__(self, room_names, max_people=6):
+    def __init__(self, room_names):
         Room.__init__(self, room_names, "office")
