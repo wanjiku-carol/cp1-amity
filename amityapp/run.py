@@ -2,9 +2,9 @@
 This example uses docopt with the built in cmd module to demonstrate an
 interactive command application.
 Usage:
-    amity create_room <room_type> <room_name>
+    amity create_room (<room_type> <room_name>)...
     amity add_person <first_name> <last_name> (Fellow|Staff) [wants_accommodation]
-    amity reallocate_person <person_identifier> <new_room_name>
+    amity reallocate_person <first_name> <last_name> <new_room_name>
     amity load_people
     amity print_allocations [-o=filename]
     amity print_unallocated [-o=filename]
@@ -69,10 +69,12 @@ class MyInteractive (cmd.Cmd):
 
     @docopt_cmd
     def do_create_room(self, args):
-        """Usage: create_room <room_type> <room_names>"""
-        room_type = args["<room_type>"]
+        """Usage: create_room (<room_type> <room_names>)..."""
+        room_types = args["<room_type>"]
         room_names = args["<room_names>"]
-        amity.create_room(room_type, room_names)
+        for room_type in room_types:
+            room_name = room_names[room_types.index(room_type)]
+            amity.create_room(room_type, room_name)
 
     @docopt_cmd
     def do_add_person(self, args):
@@ -85,18 +87,21 @@ class MyInteractive (cmd.Cmd):
 
         amity.add_person(first_name, last_name, designation, wants_accommodation)
 
-    # @docopt_cmd
-    # def do_reallocate_office(self, args):
-    #     """Usage: reallocate_person <person_identifier> <new_room_name>"""
-    #
-    #     amity.reallocate_office(args)
+    @docopt_cmd
+    def do_reallocate_person(self, args):
+        """Usage: reallocate_person <first_name> <last_name> <new_room_name>"""
+        first_name = args["<first_name>"]
+        last_name = args["<last_name>"]
+        new_room_name = args["<new_room_name>"]
+
+        amity.reallocate_person(first_name, last_name, new_room_name)
 
     # @docopt_cmd
     # # def do_load_people(self, args):
-    #     """Usage: load_people"""
-    #
-    #     amity.load_people(args)
-    #
+    #     """Usage: load_people <text_file"""
+
+        amity.load_people(args)
+
     # @docopt_cmd
     # def do_load_state(self, args):
     #     """Usage: load_state <sqlite_database>"""

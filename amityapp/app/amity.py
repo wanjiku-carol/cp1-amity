@@ -22,27 +22,29 @@ class Amity(object):
         self.living_space_allocations = {}
         self.reallocated_person = {}
 
-    def create_room(self, room_type, room_names):
+    def create_room(self, room_type, room_name):
         """function to create a room."""
         try:
             if stringcase.pascalcase(room_type) != "Office" and \
-                    stringcase.pascalcase(room_type) != "Living Space":
+                    stringcase.pascalcase(room_type) != "Livingspace":
                 raise NameError
-            if room_names == (room for room in self.rooms):
+            if room_name == (room for room in self.rooms):
                 return "Room already exists"
             else:
                 if stringcase.pascalcase(room_type) == "Office":
-                    room = Office(room_names)
+                    room = Office(room_name)
                     self.offices.append(room)
                     self.office_shuffle.append(room)
-                    self.rooms.append(room_names)
+                    self.rooms.append(room_name)
+                    print(self.rooms)
                     print("Offices created successfully")
                     return "Offices created successfully"
-                elif stringcase.pascalcase(room_type) == "Living Space":
-                    room = LivingSpace(room_names)
+                elif stringcase.pascalcase(room_type) == "Livingspace":
+                    room = LivingSpace(room_name)
                     self.living_spaces.append(room)
                     self.living_spaces_shuffle.append(room)
-                    self.rooms.append(room_names)
+                    self.rooms.append(room_name)
+                    print(self.rooms)
                     print("Living Spaces Created Successfully")
                     return "Living Spaces Created Successfully"
         except NameError:
@@ -69,19 +71,14 @@ class Amity(object):
                         self.staff_shuffle.append(person)
                         self.people.append(name)
                         self.allocate_office(name)
-                        print("Person has been added successfully.")
 
                     elif stringcase.pascalcase(designation) == "Fellow":
                         person = Fellow(first_name, last_name, wants_accommodation)
                         self.fellows.append(person)
                         self.fellows_shuffle.append(person)
                         self.people.append(name)
-                        print(self.people)
-                        print(self.allocate_office(name))
-                        print(self.allocate_living_space(name))
-                        print("Person has been added successfully.")
-                print(self.people)
-                # return "Person has been added successfully."
+                        self.allocate_office(name)
+                        self.allocate_living_space(name, wants_accommodation)
             except ValueError:
                 print("Incorrect entry. Please enter Y or N")
                 return "Incorrect entry. Please enter Y or N"
@@ -97,50 +94,45 @@ class Amity(object):
         if available_offices:
             available_office = random.choice(available_offices)
             available_office.office_members.append(name)
-            print(available_office.office_members)
+            print("{} added to {} office".format(name, available_office.room_name))
 
         else:
-            print("There are no rooms available")
-        #
-        # for office in random.shuffle(self.office_shuffle):
-        #     if len(office.office_members) <= office.max_people:
-        #         office.office_members.append(name)
-        #         print("{} has been allocated to {}".format(name,
-        #                                                    office.room_names))
-        #         return "{} has been allocated to {}".format(name,
-        #                                                     office.room_names)
+            print("There are no offices available")
 
-    def allocate_living_space(self, name):
-        if self.wants_accommodation == "Y":
-            for living_space in random.shuffle(self.living_spaces_shuffle):
-                if len(living_space.living_space_members) <= 4:
-                    living_space.living_space_members.append(name)
-                    print("{} has been allocated to {}".format(name, living_space.room_name))
-                    return "{} has been allocated to {}".format(name, living_space.room_name)
+    def allocate_living_space(self, name, wants_accommodation):
+        available_living_spaces = [living_space for living_space in
+                                   self.living_spaces if
+                                   len(living_space.living_space_members)
+                                   < living_space.max_capacity]
+        if available_living_spaces:
+            available_living_space = random.choice(available_living_spaces)
+            if wants_accommodation == "Y":
+                available_living_space.living_space_members.append(name)
+                print("{} added to {} living space".format(name,
+                                                           available_living_space.room_name))
+        else:
+            print("There are no living spaces available")
 
-    # def reallocate_person(self, id, room_name):
-    #     """function to re-allocate person to a new room"""
-    #     self.id = input("<person id>: ")
-    #     try:
-    #         self.room_name = input("<room_name>")
-    #         person_name = (name for name[int(self.id) - 1] in
-    #                        self.people)
-    #         old_office = (office for office in self.offices if
-    #                       person_name == name
-    #                       in office.office_members)
-    #         if room_name != (office.room_name for office in self.offices):
-    #             raise NameError
-    #         self.room_name.office_members.append(person_name)
-    #         old_office.office_members.remove(person_name)
-    #         print("{} successfully reallocated to {}".format(person_name,
-    #                                                          self.room_name))
-    #     except NameError:
-    #         print("Room does not exist")
+    def reallocate_person(self, first_name, last_name, new_room_name):
+        """function to re-allocate person to a new room"""
+        try:
+            print(self.rooms)
+            if new_room_name not in self.rooms:
+                raise NameError
+            person_name = first_name + last_name
+            old_office = [office for office in self.offices if person_name
+                          == name in office.office_members]
+            new_office = [room for room in self.offices if new_room_name
+                          == room.room_name]
+            new_office.office_members.append(person_name)
+            print("{} reallocated to {} office".format(person_name,
+                                                       new_office.room_name))
+        except NameError:
+            print("Office does not exist")
         # code for living space reallocations to come here
 
-    def load_people():
+    def load_people(self, text_file):
         """adds people from a text file"""
-        text_file = input("<filename: ")
         file_name = text_file.txt.readlines()
         file_name.readlines()
         for sentence in file_name:

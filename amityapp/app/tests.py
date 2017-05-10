@@ -53,9 +53,23 @@ class AmityModelTests(unittest.TestCase):
                                                  "N")
         self.assertEqual(person_wrong_des, "Incorrect entry. Please enter either Staff or Fellow")
 
-    def test_name_error(self):
-        name_with_error = self.amity.add_person("Sam76", "8?.", "Staff", "N")
-        self.assertEqual(name_with_error, "The name cannot contain numbers or special characters")
+    def test_staff_allocation_to_office(self):
+        pass
+
+    def test_staff_allocation_to_living_space(self):
+        pass
+
+    def test_fellow_allocation_to_office(self):
+        pass
+
+    def test_fellow_allocation_to_living_space(self):
+        pass
+
+    def test_empty_office(self):
+        pass
+
+    def test_empty_living_space(self):
+        pass
 
     # def test_reallocate_nonexistent_person(self):
     #     '''test you cannot reallocate a non-existent person'''

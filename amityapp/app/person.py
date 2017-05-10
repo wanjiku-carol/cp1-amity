@@ -10,7 +10,7 @@ class Person(object):
 class Fellow(Person):
 
     def __init__(self, first_name, last_name, wants_accommodation):
-        Person.__init__(self, first_name, last_name, "Fellow")
+        Person.__init__(self, first_name, last_name, "Fellow", wants_accommodation)
 
 
 class Staff(Person):
