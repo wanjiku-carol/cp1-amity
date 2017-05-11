@@ -2,12 +2,12 @@
 This example uses docopt with the built in cmd module to demonstrate an
 interactive command application.
 Usage:
-    amity create_room (<room_type> <room_name>)...
+    amity create_room <room_type> (<room_name>)...
     amity add_person <first_name> <last_name> (Fellow|Staff) [wants_accommodation]
     amity reallocate_person <first_name> <last_name> <new_room_name>
-    amity load_people
-    amity print_allocations [-o=filename]
-    amity print_unallocated [-o=filename]
+    amity load_people <text_file>
+    amity print_allocations [--o=filename]
+    amity print_unallocated [--o=filename]
     amity save_state [--db=sqlite_database]
     amity load_state <sqlite_database>
     amity print_room <room_name>
@@ -69,11 +69,10 @@ class MyInteractive (cmd.Cmd):
 
     @docopt_cmd
     def do_create_room(self, args):
-        """Usage: create_room (<room_type> <room_names>)..."""
-        room_types = args["<room_type>"]
+        """Usage: create_room <room_type> (<room_names>)..."""
+        room_type = args["<room_type>"]
         room_names = args["<room_names>"]
-        for room_type in room_types:
-            room_name = room_names[room_types.index(room_type)]
+        for room_name in room_names:
             amity.create_room(room_type, room_name)
 
     @docopt_cmd
@@ -96,49 +95,54 @@ class MyInteractive (cmd.Cmd):
 
         amity.reallocate_person(first_name, last_name, new_room_name)
 
-    # @docopt_cmd
-    # # def do_load_people(self, args):
-    #     """Usage: load_people <text_file"""
+    @docopt_cmd
+    def do_load_people(self, args):
+        """Usage: load_people <text_file>"""
+        text_file = args["<text_file>"]
 
-        amity.load_people(args)
+        amity.load_people(text_file)
 
-    # @docopt_cmd
-    # def do_load_state(self, args):
-    #     """Usage: load_state <sqlite_database>"""
-    #
-    #     amity_database.load_state(args)
-    #
-    # @docopt_cmd
-    # def do_save_state(self, args):
-    #     """Usage: save_state [--db=sqlite_database]"""
-    #
-    #     amity_database.save_state({"--db": 'amity.db'})
-    #
-    # @docopt_cmd
-    # def do_print_allocations(self, args):
-    #     """Usage: print_allocations [-o=filename]"""
-    #
-    #     print(Amity().print_allocations(args))
-    #
-    # def do_print_unallocated(self, args):
-    #     """Usage: print_unallocated [-o=filename]"""
-    #
-    #     print(Amity().print_unallocated(arg))
-    #
-    # @docopt_cmd
-    # def do_print_room(self, args):
-    #     """Usage: pprint_room <room_name>"""
-    #
-    #     print(Amity().print_room(args))
-    # def do_quit(self, args):
-    #     """Quits out of Interactive Mode."""
-    #
-    #     # print(amity_db.save_state({"--db": 'amity.db'}))
-    #     print('Thank You!')
-    #     exit()
+    @docopt_cmd
+    def do_load_state(self, args):
+        """Usage: load_state <sqlite_database>"""
+        db_name = args["<sqlite_database>"]
+
+        amity.load_state(db_name)
+
+    @docopt_cmd
+    def do_save_state(self, args):
+        """Usage: save_state <sqlite_database>"""
+        db_name = args["<sqlite_database>"]
+
+        amity.save_state(db_name)
+
+    @docopt_cmd
+    def do_print_allocations(self, args):
+        """Usage: print_allocations [--o=file_name]"""
+        file_name = args["--o"]
+
+        amity.print_allocations(file_name)
+
+    def do_print_unallocated(self, args):
+        """Usage: print_unallocated [--o=file_name]"""
+        file_name = args["--o"]
+
+        amity.print_unallocated(file_name)
+
+    @docopt_cmd
+    def do_print_room(self, args):
+        """Usage: print_room <room_name>"""
+        room_name = args["<room_name>"]
+
+        amity.print_room(room_name)
+
+    def do_quit(self, args):
+        """Quits out of Interactive Mode."""
+
+        print('Thank You!')
+        exit()
 
 
-# print(amity_db.load_state({"<sqlite_database>": 'amity.db'}))
 opt = docopt(__doc__, sys.argv[1:])
 
 if opt['--interactive']:

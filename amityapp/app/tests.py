@@ -31,13 +31,18 @@ class AmityModelTests(unittest.TestCase):
         self.assertEqual(new_wrong_room_type,
                          "invalid entry. Please enter office or living space")
 
-    def test_add_person(self):
+    def test_add_staff_allocate_to_office(self):
         ''''test that a person is added'''
         new_staff = self.amity.add_person("Joy", "Kenzo", "Staff", "N")
-        self.assertEqual(new_staff, "Person has been added successfully.")
+        self.assertEqual(new_staff, "Successful!")
 
+    def test_add_fellow_allocate_to_office(self):
         new_fellow = self.amity.add_person("Klaudia", "Mwangi", "Fellow", "Y")
-        self.assertEqual(new_fellow, "Person has been added successfully.")
+        self.assertEqual(new_fellow, "Successful!")
+
+    def test_add_fellow_allocate_to_living_space(self):
+        new_fellow = self.amity.add_person("Klaudia", "Mwangi", "Fellow", "Y")
+        self.assertEqual(new_fellow, new_fellow, "Successful!")
 
     def test_staff_cannot_be_allocated_living_space(self):
         staff_to_living = self.amity.add_person("James", "Kamau", "Staff", "Y")
@@ -52,59 +57,6 @@ class AmityModelTests(unittest.TestCase):
         person_wrong_des = self.amity.add_person("Evalyn", "Kyalo", "Watchman",
                                                  "N")
         self.assertEqual(person_wrong_des, "Incorrect entry. Please enter either Staff or Fellow")
-
-    def test_staff_allocation_to_office(self):
-        pass
-
-    def test_staff_allocation_to_living_space(self):
-        pass
-
-    def test_fellow_allocation_to_office(self):
-        pass
-
-    def test_fellow_allocation_to_living_space(self):
-        pass
-
-    def test_empty_office(self):
-        pass
-
-    def test_empty_living_space(self):
-        pass
-
-    # def test_reallocate_nonexistent_person(self):
-    #     '''test you cannot reallocate a non-existent person'''
-    #     test_nonexist_person = self.amity.reallocate_person(8, "Kilimanjaro")
-    #     self.assertEqual(test_nonexist_person,
-    #                      "Person does not exist. Please add this person")
-    #
-    # def test_reallocate_to_non_existent_room(self):
-    #     '''test you cannot reallocate to a person to a non-existent room'''
-    #     test_nonexist_room = self.amity.reallocate_person(1, "Jerusalem")
-    #     self.assertEqual(test_nonexist_room, "Room does not exist.")
-    #
-    # def test_reallocate_staff_to_living_space(self):
-    #     '''test cannot reallocate staff to living space'''
-    #     test_staff_to_living_space = self.amity.reallocate_person(1, "Mara")
-    #     self.assertEqual(test_staff_to_living_space, "Staff cannot be allocated\
-    #                     living space")
-    #
-    # def test_reallocate_fellow_to_living_space(self):
-    #     '''test reallocate fellow'''
-    #     reallocate_fellow = self.amity.reallocate_person(2, "Tsavo")
-    #     self.assertEqual(reallocate_fellow, "Reallocated Successfully")
-    #
-    # def test_reallocate_fellow_not_in_living_space(self):
-    #     '''test you cannot reallocate a fellow that is not already allocated'''
-    #     self.amity.add_person("Plantain Kiheto", "Fellow", False)
-    #     test_realloc_not_alloc = self.amity.reallocate_person(4, "Mara")
-    #     self.assertEqual(test_realloc_not_alloc, "Cannot reallocate.\
-    #     Person was not allocated to any living space.")
-    #
-    # def test_reallocate_person_to_new_office(self):
-    #     '''test reallocate a person to a new office'''
-    #     self.amity.create_room("Office", ["Office"])
-    #     reall_to_office = self.amity.reallocate_person(3, "Wall Street")
-    #     self.assertEqual(reall_to_office, "Reallocated Successfully!")
 
 
 if __name__ == '__main__':

@@ -1,0 +1,4 @@
+Wind: ['JoeMateka', 'JenniferWaithera', 'OdhisOdhiambo', 'WillisWafula', 'ZuriWariua', 'SuchiReni']
+Earth: ['JoeMateka', 'JenniferWaithera', 'OdhisOdhiambo', 'WillisWafula', 'ZuriWariua', 'SuchiReni']
+Tea: ['JoeMateka', 'OdhisOdhiambo', 'WillisWafula', 'SuchiReni']
+Coffee: ['JoeMateka', 'OdhisOdhiambo', 'WillisWafula', 'SuchiReni']
