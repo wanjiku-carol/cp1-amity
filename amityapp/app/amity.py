@@ -56,7 +56,7 @@ class Amity(object):
     def add_person(self, first_name, last_name, designation,
                    wants_accommodation):
         """add person to system and allocates a random room"""
-        name = first_name + last_name
+        name = first_name + " " + last_name
         try:
             if designation != "Staff" and designation != "Fellow":
                 raise ValueError
@@ -90,7 +90,7 @@ class Amity(object):
         """function to allocate person to room"""
         available_offices = [office for office in self.offices if
                              len(office.office_members) < office.max_capacity]
-        if len(available_offices) > 0:
+        if not available_offices:
             available_office = random.choice(available_offices)
             available_office.office_members.append(name)
             self.offices_with_members.append(available_office)
