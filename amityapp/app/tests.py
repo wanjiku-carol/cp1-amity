@@ -16,13 +16,13 @@ class AmityModelTests(unittest.TestCase):
     def test_create_office(self):
         '''tests it creates office'''
         new_office = self.amity.create_room("office", "medical")
-        self.assertEqual(new_office, "Offices created successfully")
+        self.assertEqual(new_office, "Medical created successfully")
 
     def test_create_living_space(self):
         '''tests it creates living space'''
         new_living_space = self.amity.create_room("Living Space", "Mara")
         self.assertEqual(new_living_space,
-                         "Living Spaces Created Successfully")
+                         "Mara Created Successfully")
 
     def test_wrong_room_type(self):
         '''tests error message if wrong room type is put'''

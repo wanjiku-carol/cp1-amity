@@ -9,7 +9,7 @@ Usage:
     amity print_allocations [--o=filename]
     amity print_unallocated [--o=filename]
     amity save_state [--db=sqlite_database]
-    amity load_state <sqlite_database>
+    amity load_state [--d=sqlite_database]
     amity print_room <room_name>
     amity (-i | --interactive)
     amity (-h | --help | --version)
@@ -17,6 +17,8 @@ Options:
     -o, --output  Save to a txt file
     -i, --interactive  Interactive Mode
     -h, --help  Show this screen and exit.
+    -w, --wants_accommodation Person wants accomodation
+    -d, --database Load and save state
 """
 
 import sys
@@ -77,12 +79,12 @@ class MyInteractive (cmd.Cmd):
 
     @docopt_cmd
     def do_add_person(self, args):
-        """Usage: add_person <first_name> <last_name> <designation> <wants_accommodation>"""
+        """Usage: add_person <first_name> <last_name> <designation> [--w=wants_accommodation]"""
 
         first_name = args["<first_name>"] + ''
         last_name = args["<last_name>"]
         designation = args["<designation>"]
-        wants_accommodation = args["<wants_accommodation>"]
+        wants_accommodation = args["--w"]
 
         amity.add_person(first_name, last_name, designation, wants_accommodation)
 
@@ -104,15 +106,15 @@ class MyInteractive (cmd.Cmd):
 
     @docopt_cmd
     def do_load_state(self, args):
-        """Usage: load_state <sqlite_database>"""
-        db_name = args["<sqlite_database>"]
+        """Usage: load_state [--d=sqlite_database]"""
+        db_name = args["--d"]
 
         amity.load_state(db_name)
 
     @docopt_cmd
     def do_save_state(self, args):
-        """Usage: save_state <sqlite_database>"""
-        db_name = args["<sqlite_database>"]
+        """Usage: save_state [--d=sqlite_database]"""
+        db_name = args["--d"]
 
         amity.save_state(db_name)
 

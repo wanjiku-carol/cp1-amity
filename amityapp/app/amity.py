@@ -1,15 +1,10 @@
 import random
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from app.room import Office, LivingSpace
 from app.person import Fellow, Staff
 from app.models import Persons, Rooms, Base
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-engine = create_engine('sqlite:///amity.db')
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
-session = Session()
 
 
 class Amity(object):
@@ -29,8 +24,7 @@ class Amity(object):
     def create_room(self, room_type, room_name):
         """function to create a room."""
         try:
-            if room_type.title() != "Office" and\
-                    room_type.title() != "Livingspace":
+            if not room_type.title() == "OFFICE" and not room_type.title() == "LIVINGSPACE":
                 raise NameError
             if room_name in self.rooms:
                 print("{} already exists". format(room_name))
@@ -39,73 +33,66 @@ class Amity(object):
                     room = Office(room_name)
                     self.offices.append(room)
                     self.rooms.append(room_name)
-                    print(self.rooms)
-                    print("Offices created successfully")
-                    return "Offices created successfully"
+                    print("{} office created successfully".format(room.room_name.upper()))
+                    return ("{} office created successfully".format(room.room_name.upper()))
                 elif room_type.title() == "Livingspace":
                     room = LivingSpace(room_name)
                     self.living_spaces.append(room)
                     self.rooms.append(room_name)
-                    print(self.rooms)
-                    print("Living Spaces Created Successfully")
-                    return "Living Spaces Created Successfully"
+                    print("{} living space created successfully".format(room.room_name.upper()))
+                    return "{} living space created successfully".format(room.room_name.upper())
         except NameError:
             print("invalid entry. Please enter office or living space")
             return "invalid entry. Please enter office or living space"
 
     def add_person(self, first_name, last_name, designation,
-                   wants_accommodation):
+                   wants_accommodation="N"):
         """add person to system and allocates a random room"""
-        name = first_name + " " + last_name
-        try:
-            if designation != "Staff" and designation != "Fellow":
-                raise ValueError
-            try:
-                if wants_accommodation != "Y" and wants_accommodation != "N":
-                    raise ValueError
-                if designation == "Staff" and wants_accommodation == "Y":
-                    print("Staff cannot be allocated Living Space")
-                    return "Staff cannot be allocated Living Space"
-                else:
-                    if designation.title() == "Staff":
-                        person = Staff(first_name, last_name)
-                        self.staff.append(person)
-                        self.people.append(name)
-                        self.allocate_office(name)
 
-                    elif designation.title() == "Fellow":
-                        person = Fellow(first_name, last_name, wants_accommodation)
-                        self.fellows.append(person)
-                        self.people.append(name)
-                        self.allocate_office(name)
-                        self.allocate_living_space(name, wants_accommodation)
-            except ValueError:
-                print("Incorrect entry. Please enter Y or N")
-                return "Incorrect entry. Please enter Y or N"
-        except ValueError:
-            print("Incorrect entry. Please enter either Staff or Fellow")
-            return "Incorrect entry. Please enter either Staff or Fellow"
+        if not isinstance(first_name, str) and not isinstance(last_name, str):
+            print("Incorrect entry. Name cannot have special characters")
+        name = first_name + " " + last_name
+        if not designation == "Staff" and not designation == "Fellow":
+            print("Incorrect entry. Please enter staff or fellow")
+        else:
+            if designation == "Staff" and wants_accommodation == "Y":
+                print("Staff cannot be allocated Living Space")
+        if name in self.people:
+            print("{} already exists".format(name.upper()))
+        else:
+            if designation.title() == "Staff":
+                person = Staff(first_name, last_name)
+                self.staff.append(person)
+                self.people.append(name)
+                self.allocate_office(name)
+
+            elif designation.title() == "Fellow":
+                person = Fellow(first_name, last_name, wants_accommodation)
+                self.fellows.append(person)
+                self.people.append(name)
+                self.allocate_office(name)
+                self.allocate_living_space(name, wants_accommodation)
 
     def allocate_office(self, name):
         """function to allocate person to room"""
         available_offices = [office for office in self.offices if
                              len(office.office_members) < office.max_capacity]
-        if not available_offices:
+        if available_offices:
             available_office = random.choice(available_offices)
             available_office.office_members.append(name)
             self.offices_with_members.append(available_office)
-            print("{} added to {} office".format(name, available_office.room_name))
+            print("{} added to {} office".format(name.upper(), available_office.room_name.upper()))
             print("Successful!")
 
         else:
             print("There are no offices available")
 
-    def allocate_living_space(self, name, wants_accommodation):
+    def allocate_living_space(self, name, wants_accommodation="N"):
         available_living_spaces = [living_space for living_space in
                                    self.living_spaces if
                                    len(living_space.living_space_members)
                                    < living_space.max_capacity]
-        if len(available_living_spaces) > 0:
+        if available_living_spaces:
             available_living_space = random.choice(available_living_spaces)
             if wants_accommodation == "Y":
                 available_living_space.living_space_members.append(name)
@@ -118,36 +105,40 @@ class Amity(object):
 
     def reallocate_person(self, first_name, last_name, new_room_name):
         """function to re-allocate person to a new room"""
-        full_name = first_name + last_name
+        full_name = first_name + " " + last_name
         available_offices = [office for office in self.offices if
                              len(office.office_members) < office.max_capacity]
         available_living_spaces = [living_space for living_space in
                                    self.living_spaces if
                                    len(living_space.living_space_members)
                                    < living_space.max_capacity]
-        for office in self.offices_with_members:
-            for name in office.office_members:
-                for available_office in available_offices:
-                    if full_name == name:
-                        if new_room_name == available_office.room_name:
-                            available_office.office_members.append(full_name)
-                            office.office_members.remove(name)
-                            print("{} successfully reallocated to {}".
-                                  format(full_name, new_room_name))
-                            print(available_office.office_members)
+        if full_name not in self.people:
+            print("Person does not exist")
+        else:
+            if new_room_name not in self.rooms:
+                print("Room does not exist")
+            else:
+                for office_room in self.offices_with_members:
+                    for name in office_room.office_members:
+                        for available_office in available_offices:
+                            if full_name == name:
+                                if new_room_name == available_office.room_name:
+                                    available_office.office_members.append(full_name)
+                                    office_room.office_members.remove(name)
 
-        for living_space_rm in self.living_spaces_with_mem:
-            for name in living_space_rm.living_space_members:
-                for available_living_space in available_living_spaces:
-                    if full_name == name:
-                        if new_room_name == available_living_space.room_name:
-                            available_living_space.living_space_members.append(full_name)
-                            living_space_rm.living_space_members.remove(name)
-                            print("{} successfully reallocated to {}".format(full_name,
-                                                                             new_room_name))
-                            print(available_living_space.living_space_members)
-                        else:
-                            return("{} room not available".format(new_room_name))
+                    print("{} successfully reallocated to {}".format(full_name, new_room_name))
+
+                for living_space_room in self.living_spaces_with_mem:
+                    for name in living_space_room.living_space_members:
+                        for available_living_space in available_living_spaces:
+                            if full_name == name:
+                                if new_room_name == available_living_space.room_name:
+                                    available_living_space.living_space_members.append(full_name)
+                                    living_space_room.living_space_members.remove(name)
+                    print("{} successfully reallocated to {}".format(full_name,
+                                                                     new_room_name))
+# test living space
+# add exceptions
 
     def load_people(self, text_file):
         """adds people from a text file"""
@@ -170,8 +161,12 @@ class Amity(object):
                     self.add_person(first_name, last_name, designation,
                                     wants_accommodation)
 
-    def load_state(self, db_name):
+    def load_state(self, db_name='amity.db'):
         """loads data from database into application"""
+        engine = create_engine('sqlite:///{}'.format(db_name))
+        Base.metadata.create_all(engine)
+        Session = sessionmaker(bind=engine)
+        session = Session()
         for person in session.query(Persons) .order_by(Persons.id):
             print("========People in Database==========")
             print(person.id, person.first_name, person.last_name,
@@ -180,8 +175,13 @@ class Amity(object):
             print("========Rooms in Database==========")
             print(room.id, room.room_name, room.room_type)
 
-    def save_state(self, db_name):
+    def save_state(self, db_name='amity.db'):
         """Persists all the data stored in the app to a SQLite database"""
+        engine = create_engine('sqlite:///{}'.format(db_name))
+        Base.metadata.create_all(engine)
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
         for person in self.staff:
             staff_user = Persons(first_name=person.first_name,
                                  last_name=person.last_name,
