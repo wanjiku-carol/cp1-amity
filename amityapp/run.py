@@ -125,6 +125,7 @@ class MyInteractive (cmd.Cmd):
 
         amity.print_allocations(file_name)
 
+    @docopt_cmd
     def do_print_unallocated(self, args):
         """Usage: print_unallocated [--o=file_name]"""
         file_name = args["--o"]
