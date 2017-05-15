@@ -81,7 +81,7 @@ class Amity(object):
                 self.allocate_living_space(name, wants_accommodation)
 
     def allocate_office(self, name):
-        """function to allocate person to room"""
+        """function to allocate person to office"""
         available_offices = [office for office in self.offices if
                              len(office.office_members) < office.max_capacity]
         if available_offices:
@@ -101,6 +101,7 @@ class Amity(object):
             self.unallocated_offices.append(name)
 
     def allocate_living_space(self, name, wants_accommodation="N"):
+        """allocate fellow to living space"""
         available_living_spaces = [living_space for living_space in
                                    self.living_spaces if
                                    len(living_space.living_space_members)
@@ -148,8 +149,8 @@ class Amity(object):
                                 for available_office in available_offices:
                                     if new_room_name == available_office.room_name:
                                         available_office.office_members.append(full_name)
-                                        print("{} allocated to {} office".format(full_name,
-                                                                                 new_room_name))
+                                        print("{} reallocated to {} office".format(full_name,
+                                                                                   new_room_name))
             for available_office in available_offices:
                 if new_room_name == available_office.room_name:
                     pass
@@ -164,8 +165,8 @@ class Amity(object):
                                     if new_room_name == available_living_space.room_name:
                                         available_living_space.living_space_members.append(
                                             full_name)
-                                        print("{} allocated to {} living space".format(full_name,
-                                                                                       new_room_name))
+                                        print("{} reallocated to {} living space".format(full_name,
+                                                                                         new_room_name))
 
     def load_people(self, text_file):
         """adds people from a text file"""
@@ -205,12 +206,12 @@ class Amity(object):
         session = Session()
         if db_name is None:
             db_name = 'amity.db'
+        print("========People in Database==========")
         for person in session.query(Persons) .order_by(Persons.id):
-            print("========People in Database==========")
             print(person.id, person.first_name, person.last_name,
-                  person.wants_accommodation)
+                  person.designation, person.wants_accommodation)
+        print("========Rooms in Database==========")
         for room in session.query(Rooms).order_by(Rooms.id):
-            print("========Rooms in Database==========")
             print(room.id, room.room_name, room.room_type)
 
     def save_state(self, db_name):

@@ -2,6 +2,7 @@ from abc import ABCMeta
 
 
 class Room(object):
+    """creates room object from where living space and office inherit """
     __metaclass__ = ABCMeta
     max_capacity = 0
 

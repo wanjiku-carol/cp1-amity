@@ -1,5 +1,11 @@
+from abc import ABCMeta
+
+
 class Person(object):
-    """creates a person object from where the fellow and staff subclasses inherit"""
+    """creates a person object from where the fellow and
+    staff subclasses inherit"""
+
+    __metaclass__ = ABCMeta
 
     def __init__(self, first_name, last_name, designation, wants_accommodation):
         self.first_name = first_name

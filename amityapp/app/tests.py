@@ -4,11 +4,8 @@ from app.amity import Amity
 
 class AmityModelTests(unittest.TestCase):
     def setUp(self):
+        """Set up Amity ()"""
         self.amity = Amity()
-        self.amity.add_person("Hohay", "Bombay", "Staff", "N")
-        self.amity.add_person("Jennifer", "Mwakini", "Fellow", "Y")
-        self.amity.create_room("Office", "India, Johannes, Cairo")
-        self.amity.create_room("Living Space", "Kisumu, Nairobi, Mombasa")
 
     def tearDown(self):
         del self.amity
@@ -16,13 +13,13 @@ class AmityModelTests(unittest.TestCase):
     def test_create_office(self):
         '''tests it creates office'''
         new_office = self.amity.create_room("office", "medical")
-        self.assertEqual(new_office, "Medical created successfully")
+        self.assertEqual(new_office, "MEDICAL office created successfully")
 
     def test_create_living_space(self):
         '''tests it creates living space'''
-        new_living_space = self.amity.create_room("Living Space", "Mara")
+        new_living_space = self.amity.create_room("Livingspace", "Mara")
         self.assertEqual(new_living_space,
-                         "Mara Created Successfully")
+                         "MARA living space created successfully")
 
     def test_wrong_room_type(self):
         '''tests error message if wrong room type is put'''
@@ -31,32 +28,34 @@ class AmityModelTests(unittest.TestCase):
         self.assertEqual(new_wrong_room_type,
                          "invalid entry. Please enter office or living space")
 
-    def test_add_staff_allocate_to_office(self):
-        ''''test that a person is added'''
-        new_staff = self.amity.add_person("Joy", "Kenzo", "Staff", "N")
-        self.assertEqual(new_staff, "Successful!")
-
-    def test_add_fellow_allocate_to_office(self):
-        new_fellow = self.amity.add_person("Klaudia", "Mwangi", "Fellow", "Y")
-        self.assertEqual(new_fellow, "Successful!")
-
-    def test_add_fellow_allocate_to_living_space(self):
-        new_fellow = self.amity.add_person("Klaudia", "Mwangi", "Fellow", "Y")
-        self.assertEqual(new_fellow, new_fellow, "Successful!")
-
     def test_staff_cannot_be_allocated_living_space(self):
-        staff_to_living = self.amity.add_person("James", "Kamau", "Staff", "Y")
+        self.amity.create_room("Livingspace", "Shells")
+        staff_to_living = self.amity.add_person("James", "Kamau", "Staff", "--w=Y")
         self.assertEqual(staff_to_living, "Staff cannot be allocated Living Space")
 
-    def test_wrong_wants_accomodation_entry(self):
-        person_wrong_wants_accom = self.amity.add_person("Kevin", "Ochieng",
-                                                         "Staff", "What")
-        self.assertEqual(person_wrong_wants_accom, "Incorrect entry. Please enter Y or N")
-
     def test_wrong_designation(self):
-        person_wrong_des = self.amity.add_person("Evalyn", "Kyalo", "Watchman",
-                                                 "N")
+        person_wrong_des = self.amity.add_person("Evalyn", "Kyalo", "Watchman")
         self.assertEqual(person_wrong_des, "Incorrect entry. Please enter either Staff or Fellow")
+
+    def test_reallocate_person(self):
+        self.amity.create_room("Office", "Jamuhuri")
+        self.amity.add_person("James", "Kabue", "Staff")
+        self.amity.create_room("Office", "Madaraka")
+        test_reallocate = self.amity.reallocate_person("James", "Kabue", "Madaraka")
+        self.assertEqual(test_reallocate, "James Kabue reallocated to Madaraka")
+
+    def test_reallocate_from_office_to_living_space(self):
+        self.amity.create_room("Office", "Bondo")
+        self.amity.add_person("Freshia", "Mtuli", "Staff")
+        self.amity.create_room("Livingspace", "Mtwapa")
+        test_reallocate = self.amity.reallocate_person("Freshia", "Mtuli", "Mtwapa")
+        self.assertEqual(test_reallocate, "Cannot reallocate from office to living space")
+
+    def test_reallocate_to_the_same_room(self):
+        self.amity.create_room("Office", "Bagdad")
+        self.amity.add_person("Alex", "Simanzi", "Staff")
+        test_reallocate = self.amity.reallocate_person("Alex", "Simanzi", "Bagdad")
+        self.assertEqual(test_reallocate, "Cannot reallocate to the same room")
 
 
 if __name__ == '__main__':
