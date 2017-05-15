@@ -194,12 +194,17 @@ class Amity(object):
                             self.add_person(first_name, last_name, designation,
                                             wants_accommodation)
 
-    def load_state(self, db_name='amity.db'):
+    def load_state(self, db_name):
         """loads data from database into application"""
-        engine = create_engine('sqlite:///{}'.format(db_name))
+        if db_name:
+            engine = create_engine('sqlite:///{}'.format(db_name))
+        else:
+            engine = create_engine('sqlite:///amity.db')
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         session = Session()
+        if db_name is None:
+            db_name = 'amity.db'
         for person in session.query(Persons) .order_by(Persons.id):
             print("========People in Database==========")
             print(person.id, person.first_name, person.last_name,
@@ -208,12 +213,18 @@ class Amity(object):
             print("========Rooms in Database==========")
             print(room.id, room.room_name, room.room_type)
 
-    def save_state(self, db_name='amity.db'):
+    def save_state(self, db_name):
         """Persists all the data stored in the app to a SQLite database"""
-        engine = create_engine('sqlite:///{}'.format(db_name))
+        if db_name:
+            engine = create_engine('sqlite:///{}'.format(db_name))
+        else:
+            engine = create_engine('sqlite:///amity.db')
+
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         session = Session()
+        if db_name is None:
+            db_name = 'amity.db'
 
         for person in self.staff:
             staff_user = Persons(first_name=person.first_name,
@@ -236,55 +247,60 @@ class Amity(object):
             livi_spac_add = Rooms(room_name=living_space.room_name,
                                   room_type=living_space.room_type)
             session.add(livi_spac_add)
-
         session.commit()
         session.close()
+        print("Save Successful")
 
     def print_allocations(self, file_name):
         """prints a list of allocations"""
         for key_off, value_off in self.office_members.items():
-            print(key_off.room_name)
-            print("-------------------------")
-            print(", ".join(value_off))
-            if os.path.isfile(file_name) is False:
-                print("File does not exist")
+            if not file_name:
+                print(key_off.room_name)
+                print("-------------------------")
+                print(", ".join(value_off))
             else:
-                file_open = open(file_name, "w")
-                file_open.write("{}: {}\n".format(key_off.room_name,
-                                                  ", ".join(value_off)))
-                file_open.close()
+                if os.path.isfile(file_name) is False:
+                    print("File does not exist")
+                else:
+                    with open(file_name, 'w') as file_open:
+                        file_open.write("{}: {}\n".format(key_off.room_name,
+                                                          ", ".join(value_off)))
+                        file_open.close()
         for key_liv, value_liv in self.living_mem.items():
-            print(key_liv.room_name)
-            print("-------------------------")
-            print(", ".join(value_liv))
-            if os.path.isfile(file_name) is False:
-                print("File does not exist")
+            if not file_name:
+                print(key_liv.room_name)
+                print("-------------------------")
+                print(", ".join(value_liv))
             else:
-                file_open = open(file_name, "w")
-                file_open.write("{}: {}\n".format(key_liv.room_name,
-                                                  ", ".join(value_liv)))
-                file_open.close()
+                if os.path.isfile(file_name) is False:
+                    print("File does not exist")
+                else:
+                    with open(file_name, 'w') as file_open:
+                        file_open.write("{}: {}\n".format(key_liv.room_name,
+                                                          ", ".join(value_liv)))
+                        file_open.close()
 
     def print_unallocated(self, file_name):
         """prints a list of unallocated people"""
-        for office in self.unallocated_offices:
+        if not file_name:
+            if not self.unallocated_offices:
+                print("There is no one awaiting allocation to office")
+            if not self.unallocated_living:
+                print("There is no one awaiting allocation to living space")
             print("=====awaiting allocation to office ======")
-            print(office)
+            print(", ".join(self.unallocated_offices))
+            print("=====awaiting allocation to living space =====")
+            print(", ".join(self.unallocated_living))
+        else:
             if os.path.isfile(file_name) is False:
                 print("File does not exist")
             else:
-                file_open = open(file_name, "w")
-                file_open.write("{}: {}\n".format(office))
-                file_open.close()
-        for living_space in self.unallocated_living:
-            print("=====awaiting allocatopn to living space =====")
-            print(living_space)
-            if os.path.isfile(file_name) is False:
-                print("File does not exist")
-            else:
-                file_open = open(file_name, "w")
-                file_open.write("{}: {}\n".format(living_space))
-                file_open.close()
+                with open(file_name, 'w') as file_open:
+                    file_open.write("=====awaiting allocation to office ======")
+                    file_open.write(", ".join(self.unallocated_offices))
+                    file_open.write("=====awaiting allocatopn to living space =====")
+                    file_open.write(", ".join(self.unallocated_living))
+                    file_open.close()
 
     def print_room(self, room_name):
         """prints names of people in room"""

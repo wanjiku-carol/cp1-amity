@@ -1,4 +1,9 @@
+from abc import ABCMeta
+
+
 class Room(object):
+    __metaclass__ = ABCMeta
+    max_capacity = 0
 
     def __init__(self, room_names, room_type):
         self.room_name = room_names
@@ -6,6 +11,7 @@ class Room(object):
 
 
 class LivingSpace(Room):
+    """inherits from Room class"""
     living_space_members = []
     max_capacity = 4
 
@@ -14,6 +20,7 @@ class LivingSpace(Room):
 
 
 class Office(Room):
+    """inherits from Room class"""
     office_members = []
     max_capacity = 6
 

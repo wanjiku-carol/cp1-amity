@@ -1,4 +1,5 @@
 class Person(object):
+    """creates a person object from where the fellow and staff subclasses inherit"""
 
     def __init__(self, first_name, last_name, designation, wants_accommodation):
         self.first_name = first_name
@@ -8,12 +9,14 @@ class Person(object):
 
 
 class Fellow(Person):
+    """inherits from Person Class"""
 
     def __init__(self, first_name, last_name, wants_accommodation):
         Person.__init__(self, first_name, last_name, "Fellow", wants_accommodation)
 
 
 class Staff(Person):
+    """inherits from Person Class"""
 
     def __init__(self, first_name, last_name):
         Person.__init__(self, first_name, last_name, "Staff", "N")

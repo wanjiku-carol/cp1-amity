@@ -1,5 +1,6 @@
 .DS_Store
 __pycache__/
 *.pyc
-amity-venv/
+cp1-amity/amity-venv/
 None
+db.sqlite3
