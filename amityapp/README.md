@@ -1,6 +1,24 @@
 # **AMITY SPACE ALLOCATION APPLICATION**
 This is a software that allows for allocation of space to people.
 
+Create a new directory and clone the repository:
+
+> mkdir amity_allocation
+
+> cd amity_allocation
+
+> git clone https://github.com/wanjiku-carol/cp1-amity.git
+
+> cd cp1-amity
+
+Install the requirements
+
+> pip install -r requirements.txt
+
+Run the app
+
+> python docopt_file.py -i
+
 **Features and Usage**
 
 A user can be able to:
