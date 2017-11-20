@@ -1,0 +1,6 @@
+__pycache__/		
+ -*.pyc		
+ -amity-venv/		
+ -None		
+ -db.sqlite3
+ .DS_Store
