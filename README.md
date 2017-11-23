@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/wanjiku-carol/cp1-amity.svg?branch=ch-remove-unneccessary-packages)](https://travis-ci.org/wanjiku-carol/cp1-amity)
+
 # **AMITY SPACE ALLOCATION APPLICATION**
 This is a software that allows for allocation of space to people.
 
