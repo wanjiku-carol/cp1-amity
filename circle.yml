@@ -4,4 +4,4 @@ machine:
 
 test:
   override:
-    - pytest class_tests.py -v
+    - pytest -v
